@@ -1,7 +1,6 @@
 name: lia_app1
 description: "A new Flutter project."
-
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -11,16 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   provider: ^6.0.0
   google_fonts: ^4.0.0
   smooth_page_indicator: ^1.2.0+3
-
-  # Certifique-se de usar a versão correta do FlutterFlow
-  flutter_flow:
-    git:
-      url: https://github.com/flutterflow/flutterflow.git
-      ref: main # Substitua pelo branch ou tag específico se necessário
 
 dev_dependencies:
   flutter_test:
@@ -29,14 +21,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
   assets:
-    - assets/fonts/
-
-  # Adicione fontes personalizadas aqui se necessário
-  fonts:
-    - family: 'LiaApp'
-      fonts:
-        - asset: assets/fonts/liaapp.ttf
-
-  # Se precisar adicionar outras configurações específicas, faça aqui.
+    - assets/images/

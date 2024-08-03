@@ -1,71 +1,35 @@
-// lib/liahome_page_widget.dart
-
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_animate/flutter_animate.dart'; // Adicione isso se você usar animações
-import 'package:flutter_flow/flutter_flow_animations.dart'; // Certifique-se de ter essas bibliotecas
-import 'package:flutter_flow/flutter_flow_icon_button.dart'; // Certifique-se de ter essas bibliotecas
-import 'package:flutter_flow/flutter_flow_theme.dart'; // Certifique-se de ter essas bibliotecas
-import 'package:flutter_flow/flutter_flow_util.dart'; // Certifique-se de ter essas bibliotecas
-import 'package:flutter_flow/flutter_flow_widgets.dart'; // Certifique-se de ter essas bibliotecas
-
-import 'liahome_page_model.dart';
-import '/components/avegatebar_widget.dart';
 
 class LIAhomePAGEWidget extends StatefulWidget {
-  const LIAhomePAGEWidget({Key? key}) : super(key: key);
+  const LIAhomePAGEWidget({super.key});
 
   @override
   State<LIAhomePAGEWidget> createState() => _LIAhomePAGEWidgetState();
 }
 
 class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProviderStateMixin {
-  late LIAhomePAGEModel _model;
-  final scaffoldKey = GlobalKey<ScaffoldState>();
-  final animationsMap = <String, AnimationInfo>{};
+  PageController? _pageViewController;
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
-    _model = createModel(context, () => LIAhomePAGEModel());
-
-    animationsMap.addAll({
-      'pageViewOnActionTriggerAnimation': AnimationInfo(
-        trigger: AnimationTrigger.onActionTrigger,
-        applyInitialState: true,
-        effectsBuilder: () => [
-          RotateEffect(
-            curve: Curves.easeIn,
-            delay: 0.0.ms,
-            duration: 600.0.ms,
-            begin: 0.0,
-            end: 1.0,
-          ),
-        ],
-      ),
-    });
-    setupAnimations(
-      animationsMap.values.where((anim) =>
-          anim.trigger == AnimationTrigger.onActionTrigger ||
-          !anim.applyInitialState),
-      this,
-    );
+    _pageViewController = PageController(initialPage: 0);
   }
 
   @override
   void dispose() {
-    _model.dispose();
+    _pageViewController?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _model.unfocusNode.canRequestFocus
-          ? FocusScope.of(context).requestFocus(_model.unfocusNode)
-          : FocusScope.of(context).unfocus(),
+      onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: Color(0xFFC5C5AD),
@@ -78,21 +42,20 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                 title: Text(
                   'Title',
                   style: GoogleFonts.outfit(
+                    textStyle: Theme.of(context).textTheme.titleLarge,
                     letterSpacing: 0,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
                   ),
                 ),
                 subtitle: Text(
                   'Subtitle goes here...',
                   style: GoogleFonts.readexPro(
+                    textStyle: Theme.of(context).textTheme.titleMedium,
                     letterSpacing: 0,
-                    fontSize: 16,
                   ),
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
-                  color: Colors.black,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
                   size: 20,
                 ),
                 tileColor: Color(0xFFFFDC95),
@@ -105,21 +68,14 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
           backgroundColor: Color(0xFF50723C),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: Icon(
-              Icons.menu,
-              color: Colors.white,
-              size: 30,
-            ),
-            onPressed: () {
-              scaffoldKey.currentState!.openDrawer();
-            },
+            icon: Icon(Icons.menu, color: Theme.of(context).primaryColor, size: 30),
+            onPressed: () => scaffoldKey.currentState!.openDrawer(),
           ),
           title: Text(
             'LIA',
             style: GoogleFonts.outfit(
+              textStyle: Theme.of(context).textTheme.headlineMedium,
               letterSpacing: 0,
-              fontSize: 24,
-              fontWeight: FontWeight.w600,
             ),
           ),
           centerTitle: true,
@@ -138,7 +94,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40),
                       child: PageView(
-                        controller: _model.pageViewController ??= PageController(initialPage: 0),
+                        controller: _pageViewController,
                         scrollDirection: Axis.horizontal,
                         children: [
                           ClipRRect(
@@ -186,11 +142,11 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                       child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 16),
                         child: SmoothPageIndicator(
-                          controller: _model.pageViewController ??= PageController(initialPage: 0),
+                          controller: _pageViewController!,
                           count: 4,
                           axisDirection: Axis.horizontal,
                           onDotClicked: (i) async {
-                            await _model.pageViewController!.animateToPage(
+                            await _pageViewController!.animateToPage(
                               i,
                               duration: Duration(milliseconds: 500),
                               curve: Curves.ease,
@@ -212,17 +168,11 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                     ),
                   ],
                 ),
-              ).animateOnActionTrigger(
-                animationsMap['pageViewOnActionTriggerAnimation']!,
               ),
               Expanded(
                 child: Align(
                   alignment: AlignmentDirectional(0, 1),
-                  child: wrapWithModel(
-                    model: _model.avegatebarModel,
-                    updateCallback: () => setState(() {}),
-                    child: AvegatebarWidget(),
-                  ),
+                  child: Placeholder(), // Replace with your custom widget
                 ),
               ),
             ],
