@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class LIAhomePAGEWidget extends StatefulWidget {
   const LIAhomePAGEWidget({super.key});
@@ -10,21 +8,10 @@ class LIAhomePAGEWidget extends StatefulWidget {
   State<LIAhomePAGEWidget> createState() => _LIAhomePAGEWidgetState();
 }
 
-class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProviderStateMixin {
-  PageController? _pageViewController;
-  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
-  @override
-  void initState() {
-    super.initState();
-    _pageViewController = PageController(initialPage: 0);
-  }
-
-  @override
-  void dispose() {
-    _pageViewController?.dispose();
-    super.dispose();
-  }
+class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
+    with TickerProviderStateMixin {
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  PageController? pageViewController;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +19,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Color(0xFFC5C5AD),
+        backgroundColor: const Color(0xFFC5C5AD),
         drawer: Drawer(
           elevation: 16,
           child: Column(
@@ -41,47 +28,39 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
               ListTile(
                 title: Text(
                   'Title',
-                  style: GoogleFonts.outfit(
-                    textStyle: Theme.of(context).textTheme.titleLarge,
-                    letterSpacing: 0,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 subtitle: Text(
                   'Subtitle goes here...',
-                  style: GoogleFonts.readexPro(
-                    textStyle: Theme.of(context).textTheme.titleMedium,
-                    letterSpacing: 0,
-                  ),
+                  style: Theme.of(context).textTheme.titleMedium,
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
                   color: Theme.of(context).textTheme.bodyMedium?.color,
                   size: 20,
                 ),
-                tileColor: Color(0xFFFFDC95),
+                tileColor: Color.fromARGB(255, 0, 0, 0),
                 dense: false,
               ),
             ],
           ),
         ),
         appBar: AppBar(
-          backgroundColor: Color(0xFF50723C),
+          backgroundColor: const Color(0xFF50723C),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: Icon(Icons.menu, color: Theme.of(context).primaryColor, size: 30),
+            icon: Icon(Icons.menu, color: const Color.fromARGB(255, 0, 0, 0), size: 30),
             onPressed: () => scaffoldKey.currentState!.openDrawer(),
           ),
           title: Text(
             'LIA',
-            style: GoogleFonts.outfit(
-              textStyle: Theme.of(context).textTheme.headlineMedium,
-              letterSpacing: 0,
-            ),
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
           centerTitle: true,
           elevation: 0,
         ),
         body: SafeArea(
+          top: true,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -92,9 +71,9 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                 child: Stack(
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40),
+                      padding: const EdgeInsetsDirectional.fromSTEB(0, 0, 0, 40),
                       child: PageView(
-                        controller: _pageViewController,
+                        controller: pageViewController ??= PageController(initialPage: 0),
                         scrollDirection: Axis.horizontal,
                         children: [
                           ClipRRect(
@@ -104,7 +83,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                               width: 300,
                               height: 200,
                               fit: BoxFit.fill,
-                              alignment: Alignment(0, 0),
+                              alignment: const Alignment(0, 0),
                             ),
                           ),
                           ClipRRect(
@@ -138,22 +117,22 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
                       ),
                     ),
                     Align(
-                      alignment: AlignmentDirectional(0, 1),
+                      alignment: const AlignmentDirectional(0, 1),
                       child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(16, 0, 0, 16),
+                        padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 0, 16),
                         child: SmoothPageIndicator(
-                          controller: _pageViewController!,
+                          controller: pageViewController ??= PageController(initialPage: 0),
                           count: 4,
                           axisDirection: Axis.horizontal,
                           onDotClicked: (i) async {
-                            await _pageViewController!.animateToPage(
+                            await pageViewController!.animateToPage(
                               i,
-                              duration: Duration(milliseconds: 500),
+                              duration: const Duration(milliseconds: 500),
                               curve: Curves.ease,
                             );
                             setState(() {});
                           },
-                          effect: ExpandingDotsEffect(
+                          effect: const ExpandingDotsEffect(
                             expansionFactor: 3,
                             spacing: 8,
                             radius: 16,
@@ -171,8 +150,39 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProvid
               ),
               Expanded(
                 child: Align(
-                  alignment: AlignmentDirectional(0, 1),
-                  child: Placeholder(), // Replace with your custom widget
+                  alignment: const AlignmentDirectional(0, 1),
+                  child: Padding(
+                    padding: const EdgeInsetsDirectional.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.home, color: Color(0xFF50723C), size: 30),
+                          onPressed: () {
+                            // Handle home button press
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.book_outlined, color: Color(0xFF50723C), size: 30),
+                          onPressed: () {
+                            // Handle search button press
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.camera_alt_sharp, color: Color(0xFF50723C), size: 30),
+                          onPressed: () {
+                            // Handle profile button press
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.back_hand_outlined, color: Color(0xFF50723C), size: 30),
+                          onPressed: () {
+                            // Handle profile button press
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
