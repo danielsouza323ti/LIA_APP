@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-
+import 'dicionario_screen.dart'; 
 class LIAhomePAGEWidget extends StatefulWidget {
   const LIAhomePAGEWidget({super.key});
 
@@ -39,7 +39,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
                   color: Theme.of(context).textTheme.bodyMedium?.color,
                   size: 20,
                 ),
-                tileColor: Color.fromARGB(255, 0, 0, 0),
+                tileColor: const Color.fromARGB(255, 0, 0, 0),
                 dense: false,
               ),
             ],
@@ -49,7 +49,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
           backgroundColor: const Color(0xFF50723C),
           automaticallyImplyLeading: false,
           leading: IconButton(
-            icon: Icon(Icons.menu, color: const Color.fromARGB(255, 0, 0, 0), size: 30),
+            icon: const Icon(Icons.menu, color: Color.fromARGB(255, 0, 0, 0), size: 30),
             onPressed: () => scaffoldKey.currentState!.openDrawer(),
           ),
           title: Text(
@@ -159,25 +159,28 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
                         IconButton(
                           icon: const Icon(Icons.home, color: Color(0xFF50723C), size: 30),
                           onPressed: () {
-                            // Handle home button press
+                           
                           },
                         ),
                         IconButton(
                           icon: const Icon(Icons.book_outlined, color: Color(0xFF50723C), size: 30),
                           onPressed: () {
-                            // Handle search button press
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => BookScreen()),
+                            );
                           },
                         ),
                         IconButton(
                           icon: const Icon(Icons.camera_alt_sharp, color: Color(0xFF50723C), size: 30),
                           onPressed: () {
-                            // Handle profile button press
+                            
                           },
                         ),
                         IconButton(
                           icon: const Icon(Icons.back_hand_outlined, color: Color(0xFF50723C), size: 30),
                           onPressed: () {
-                            // Handle profile button press
+                           
                           },
                         ),
                       ],

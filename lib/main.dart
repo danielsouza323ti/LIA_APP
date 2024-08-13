@@ -1,7 +1,6 @@
-// lib/main.dart
-
 import 'package:flutter/material.dart';
 import 'liahome_page_widget.dart';
+import 'dicionario_screen.dart';  
 
 void main() {
   runApp(MyApp());
@@ -16,6 +15,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: LIAhomePAGEWidget(),
+      routes: {
+        '/books': (context) => BookScreen(), 
+      },
     );
   }
 }
