@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'liahome_page_widget.dart';
-import 'dicionario_screen.dart';  
+import 'liahome_page_widget.dart'; // Certifique-se de que o nome do arquivo esteja correto
 
 void main() {
   runApp(MyApp());
@@ -14,10 +13,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LIAhomePAGEWidget(),
-      routes: {
-        '/books': (context) => BookScreen(), 
-      },
+      home: LIAhomePAGEWidget(), // A tela inicial do seu aplicativo
     );
   }
 }
