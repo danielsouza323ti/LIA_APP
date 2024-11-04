@@ -15,6 +15,7 @@ dependencies:
   google_fonts: ^4.0.0
   smooth_page_indicator: ^1.2.0+3
   carousel_slider: ^4.2.1
+  url_launcher: ^6.0.20
 
 dev_dependencies:
   flutter_test:
@@ -27,4 +28,10 @@ flutter:
     - assets/images/lia_logo.png
     - assets/images/ipaese1.jpeg
     - assets/images/ipaese.jpeg
-    - assets/images/ipaese2.jpeg
+    - assets/images/ipaese.png
+    - assets/images/sergipetec.jfif
+    
+  fonts:
+    - family: AFACAD FLUX
+      fonts:
+        - asset: assets/fonts/AFACAD FLUX.ttf

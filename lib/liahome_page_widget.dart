@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
+import 'package:url_launcher/url_launcher.dart';
+
+import 'dart:async';
 
 class LIAhomePAGEWidget extends StatefulWidget {
   const LIAhomePAGEWidget({super.key});
@@ -7,22 +10,34 @@ class LIAhomePAGEWidget extends StatefulWidget {
   State<LIAhomePAGEWidget> createState() => _LIAhomePAGEWidgetState();
 }
 
-class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
-    with TickerProviderStateMixin {
+class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget> with TickerProviderStateMixin {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   int _currentIndex = 0;
+  late PageController _pageController;
+  Timer? _timer;
 
   final List<String> images = [
     'assets/images/ipaese.jpeg', // Substitua pelos caminhos das suas imagens
-    'assets/images/ipaese2.jpeg',
     'assets/images/ipaese1.jpeg',
   ];
 
   final List<String> captions = [
-    'Legenda 1', // Adicione suas legendas aqui
-    'Legenda 2',
-    'Legenda 3',
+    '', // Adicione suas legendas aqui
+    '',
   ];
+
+  @override
+void initState() {
+  super.initState();
+  _pageController = PageController(initialPage: _currentIndex);
+}
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +54,15 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
               ListTile(
                 title: Text(
                   'Title',
-                  style: Theme.of(context).textTheme.titleLarge,
+                  style: TextStyle(fontFamily: 'AFACAD FLUX', fontSize: 20),
                 ),
                 subtitle: Text(
                   'Subtitle goes here...',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  style: TextStyle(fontFamily: 'AFACAD FLUX', fontSize: 16),
                 ),
                 trailing: Icon(
                   Icons.arrow_forward_ios,
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                  color: Colors.black,
                   size: 20,
                 ),
                 tileColor: const Color.fromARGB(255, 255, 255, 255),
@@ -57,7 +72,7 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
           ),
         ),
         appBar: AppBar(
-          backgroundColor: const Color(0xFF50723C),
+          backgroundColor: const Color.fromRGBO(97, 183, 101, 1),
           automaticallyImplyLeading: false,
           leading: IconButton(
             icon: const Icon(Icons.menu, color: Colors.white, size: 30),
@@ -70,170 +85,294 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
           centerTitle: true,
           elevation: 0,
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // Carrossel de imagens com bordas arredondadas e sombra
-              Container(
-                height: 200, // Altura do carrossel
-                child: PageView.builder(
-                  itemCount: images.length,
-                  itemBuilder: (context, index) {
-                    return Stack(
-                      alignment: Alignment.bottomCenter, // Alinha a legenda na parte inferior
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15), // Bordas arredondadas
-                          child: Container(
-                            height: 200, // Mantém a altura padrão das imagens
-                            width: MediaQuery.of(context).size.width, // Largura da tela
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 5), // Sombra para baixo
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              images[index],
-                              fit: BoxFit.cover,
-                            ),
+ body: SafeArea(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        height: 200, // Altura do carrossel
+        child: FocusScope(
+          canRequestFocus: false, // Impede que o PageView mude o foco
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: images.length,
+            itemBuilder: (context, index) {
+              return Stack(
+                alignment: Alignment.bottomCenter,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 10,
+                            offset: Offset(0, 5),
                           ),
-                        ),
-                        Container(
-                          padding: EdgeInsets.all(8), // Espaçamento da legenda
-                          color: Colors.lightGreenAccent, // Fundo verde claro
-                          child: Text(
-                            captions[index],
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-              SizedBox(height: 20), // Espaço entre o carrossel e o restante do conteúdo
-              Expanded(
-                child: Center(
-                  child: Text(
-                    'Bem-vindo à LIA!',
-                    style: TextStyle(fontSize: 24),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Container(
-          height: 60, // Diminuindo a altura da barra de navegação
-          child: Stack(
-            clipBehavior: Clip.none,
-            children: [
-              CustomPaint(
-                size: Size(MediaQuery.of(context).size.width, 60),
-                painter: CustomNavigationBarPainter(),
-              ),
-              Center(
-                heightFactor: 0.8, // Ajustando a posição do botão de câmera
-                child: Container(
-                  width: 48, // Diminuindo o tamanho do botão
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF50723C),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(
-                      Icons.camera_alt,
-                      size: 28, // Aumentando o ícone da câmera
-                      color: Colors.white,
+                        ],
+                      ),
+                      child: Image.asset(
+                        images[index],
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const IApage(), // Substitua pela sua tela
-                        ),
-                      );
-                    },
                   ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    color: const Color.fromRGBO(97, 183, 101, 1),
+                    child: Text(
+                      captions[index],
+                      style: TextStyle(
+                        fontFamily: 'AFACAD FLUX',
+                        color: Colors.black,
+                        fontSize: 18,
                 ),
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            ),
+          ],
+        );
+      },
+    ),
+  ),
+),
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Ícone de Home
-                    IconButton(
-                      icon: Icon(
-                        Icons.home,
-                        size: 30,
-                        color: _currentIndex == 0
-                            ? Colors.lightGreen // Destacar a cor se for a tela Home
-                            : const Color(0xFF50723C),
+                    Text(
+                      'Parceiros:',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'AFACAD FLUX',
+                        fontSize: 15,
+                        color: Colors.black,
                       ),
-                      onPressed: () {
-                        setState(() {
-                          _currentIndex = 0;
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const LIAhomePAGEWidget(),
-                            ),
-                          );
-                        });
-                      },
                     ),
-                    SizedBox(width: 80), // Espaço para o botão central
-                    // Ícone de Avatar
-                    IconButton(
-                      icon: Icon(
-                        Icons.back_hand,
-                        size: 30,
-                        color: _currentIndex == 1
-                            ? Colors.lightGreen // Destacar a cor se for a tela Avatar
-                            : const Color(0xFF50723C),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _currentIndex = 1;
-                          // Ação ao navegar para a tela do Avatar
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AvatarPage(), // Substitua pela sua tela
-                            ),
-                          );
-                        });
+                    SizedBox(height: 10), // Espaço entre o título e as caixas
+                    GestureDetector(
+                      onTap: () async {
+                        const url = 'https://sergipetec.org.br/';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          throw 'Could not launch $url';
+                        }
                       },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width, // Largura da tela
+                        margin: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.all(8), // Espaçamento interno
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9), // Cor de fundo com maior opacidade
+                          borderRadius: BorderRadius.circular(12), // Bordas arredondadas
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20, // Tamanho da logo em círculo
+                              backgroundImage: AssetImage('assets/images/sergipetec.jfif'), // Caminho da logo
+                            ),
+                            SizedBox(width: 10), // Espaço entre a logo e o texto
+                            Text(
+                              'Sergipetec', // Nome do parceiro
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'AFACAD FLUX',
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () async {
+                        const url = 'https://www.ipaese.org.br/';
+                        if (await canLaunchUrl(Uri.parse(url))) {
+                          await launchUrl(Uri.parse(url));
+                        } else {
+                          throw 'Could not launch $url';
+                        }
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width, // Largura da tela
+                        margin: const EdgeInsets.only(top: 10),
+                        padding: const EdgeInsets.all(8), // Espaçamento interno
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.9), // Cor de fundo com maior opacidade
+                          borderRadius: BorderRadius.circular(12), // Bordas arredondadas
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 5,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 20, // Tamanho da logo em círculo
+                              backgroundImage: AssetImage('assets/images/ipaese.png'), // Caminho da logo
+                            ),
+                            SizedBox(width: 10), // Espaço entre a logo e o texto
+                            Text(
+                              'Ipaese', // Nome do parceiro
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'AFACAD FLUX',
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
+              SizedBox(height: 20),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    '',
+                    style: TextStyle(
+                      fontFamily: 'AFACAD FLUX',
+                      fontSize: 24,
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
+bottomNavigationBar: Container(
+  height: 60,
+  color: Colors.white,
+  child: Stack(
+    clipBehavior: Clip.none,
+    children: [
+      CustomPaint(
+        size: Size(MediaQuery.of(context).size.width, 60),
+        painter: CustomNavigationBarPainter(),
+      ),
+      Positioned(
+        top: -20,
+        left: MediaQuery.of(context).size.width / 2 - 28,
+        child: Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(97, 183, 101, 1),
+            shape: BoxShape.circle,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.2),
+                blurRadius: 6,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: IconButton(
+            icon: Icon(
+              Icons.camera_alt_outlined,
+              size: 28,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const IApage(),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+      Positioned(
+        left: 0,
+        right: 0,
+        bottom: 0,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            IconButton(
+              icon: Icon(
+                Icons.home,
+                size: 30,
+                color: _currentIndex == 0
+                    ? const Color.fromARGB(255, 175, 238, 178)
+                    : const Color.fromRGBO(97, 183, 101, 1),
+              ),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 0; // Atualiza o índice apenas aqui
+                });
+                // Navegue apenas se não estiver na página atual
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LIAhomePAGEWidget(),
+                  ),
+                );
+              },
+            ),
+            IconButton(
+              icon: Icon(
+                Icons.accessibility_new_rounded,
+                size: 30,
+                color: _currentIndex == 1
+                    ? const Color.fromARGB(255, 175, 238, 178)
+                    : const Color.fromRGBO(97, 183, 101, 1),
+              ),
+              onPressed: () {
+                setState(() {
+                  _currentIndex = 1; // Atualiza o índice apenas aqui
+                });
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AvatarPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+        floatingActionButton: IconButton(
+          icon: Icon(
+            Icons.help_outline,
+            color: Colors.black,
+            size: 30,
+          ),
           onPressed: () {
-            // Ação ao pressionar o botão de ajuda
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  title: Text('Ajuda'),
-                  content: Text('Aqui está a ajuda que você precisa.'),
+                  title: Text('Ajuda', style: TextStyle(fontFamily: 'AFACAD FLUX')),
+                  content: Text('Aqui está a ajuda que você precisa.', style: TextStyle(fontFamily: 'AFACAD FLUX')),
                   actions: [
                     TextButton(
-                      child: Text('Fechar'),
+                      child: Text('Fechar', style: TextStyle(fontFamily: 'AFACAD FLUX')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -243,8 +382,66 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
               },
             );
           },
-          backgroundColor: const Color(0xFF50723C),
-          child: Icon(Icons.help_outline),
+        ),
+      ),
+    );
+  }
+}
+
+// Página de IA
+class IApage extends StatelessWidget {
+  const IApage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('IA Page'),
+        backgroundColor: const Color.fromRGBO(97, 183, 101, 1),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LIAhomePAGEWidget()),
+            );
+          },
+        ),
+      ),
+      body: Center(
+        child: const Text(
+          'Esta é a página de IA',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
+  }
+}
+
+// Página de Avatar
+class AvatarPage extends StatelessWidget {
+  const AvatarPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Avatar Page'),
+        backgroundColor: const Color.fromRGBO(97, 183, 101, 1),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const LIAhomePAGEWidget()),
+            );
+          },
+        ),
+      ),
+      body: Center(
+        child: const Text(
+          'Esta é a página do Avatar',
+          style: TextStyle(fontSize: 24),
         ),
       ),
     );
@@ -254,72 +451,21 @@ class _LIAhomePAGEWidgetState extends State<LIAhomePAGEWidget>
 class CustomNavigationBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = const Color.fromARGB(255, 218, 218, 218)
+    final paint = Paint()
+      ..color = const Color.fromARGB(255, 255, 255, 255)
       ..style = PaintingStyle.fill;
 
-    Path path = Path();
-    double centerX = size.width / 2;
-
-    path.moveTo(0, 20);
-    path.quadraticBezierTo(5, 0, 40, 0);
-    path.lineTo(centerX - 30, 0);
-    path.quadraticBezierTo(centerX - 30, 40, centerX, 40);
-    path.quadraticBezierTo(centerX + 30, 40, centerX + 30, 0);
-    path.lineTo(size.width - 40, 0);
-    path.quadraticBezierTo(size.width - 5, 0, size.width, 20);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawShadow(path, const Color(0xFF50723C), 5, true);
-    canvas.drawPath(path, paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTRB(0, 0, size.width, size.height),
+        Radius.circular(20),
+      ),
+      paint,
+    );
   }
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return false;
-  }
-}
-
-// Defina sua classe IApage aqui
-class IApage extends StatelessWidget {
-  const IApage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('IA Page'),
-        backgroundColor: const Color(0xFF50723C),
-      ),
-      body: Center(
-        child: Text(
-          'Esta é a página de IA',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
-  }
-}
-
-// Defina sua classe AvatarPage aqui
-class AvatarPage extends StatelessWidget {
-  const AvatarPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Avatar Page'),
-        backgroundColor: const Color(0xFF50723C),
-      ),
-      body: Center(
-        child: Text(
-          'Esta é a página do Avatar',
-          style: TextStyle(fontSize: 24),
-        ),
-      ),
-    );
   }
 }
