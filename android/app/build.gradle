@@ -51,8 +51,18 @@ android {
             signingConfig = signingConfigs.debug
         }
     }
+    dependencies {
+    implementation project(':unityLibrary')
+}
+
 }
 
 flutter {
     source = "../.."
+}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
 }
